@@ -20,8 +20,8 @@ object CartFeature {
 
     sealed class Eff{
         object LoadCart: Eff()
-        data class  IncrementItem(val dishId: String): Eff()
-        data class  DecrementItem(val dishId: String): Eff()
+        data class IncrementItem(val dishId: String): Eff()
+        data class DecrementItem(val dishId: String): Eff()
         data class RemoveItem(val dishId: String): Eff()
         data class SendOrder(val order: Map<String, Int>) : Eff()
     }
