@@ -55,7 +55,7 @@ class DishesEffHandler @Inject constructor(
 
 
             is DishesFeature.Eff.SearchDishes -> {
-                delay(3000)
+                //delay(3000)
                 commit(DishesFeature.Msg.ShowLoading.toMsg())
                 val dishes = repository.searchDishes(effect.query)
                 commit(DishesFeature.Msg.ShowDishes(dishes).toMsg())

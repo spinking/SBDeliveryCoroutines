@@ -30,7 +30,7 @@ class DishEffHandler @Inject constructor(
                     val count = repository.cartCount()
                     commit(Msg.UpdateCartCount(count))
                     notifyChannel.send(
-                        Eff.Notification.Text("В корзину добавлено $count товаров")
+                        Eff.Notification.Text("В корзину добавлено ${effect.count} товаров")
                     )
                 }
                 is DishFeature.Eff.LoadDish -> {
@@ -47,8 +47,9 @@ class DishEffHandler @Inject constructor(
                 }
                 is DishFeature.Eff.SendReview -> {
                     try {
-                        repository.sendReview(effect.id, effect.rating, effect.review)
-                        val reviewList = repository.loadReviews(effect.id)
+                        val reviewList = repository.loadReviews(effect.id).toMutableList()
+                        val review = repository.sendReview(effect.id, effect.rating, effect.review)
+                        reviewList.add(review)
                         commit(DishFeature.Msg.ShowReviews(reviewList).toMsg())
                         notifyChannel.send(Eff.Notification.Text("Отзыв успешно отправлен"))
                     } catch (t: Throwable) {
@@ -67,6 +68,3 @@ class DishEffHandler @Inject constructor(
     private fun DishFeature.Msg.toMsg(): Msg = Msg.Dish(this)
 
 }
-
-
-
