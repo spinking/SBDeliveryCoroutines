@@ -25,7 +25,14 @@ class DishEffHandler @Inject constructor(
         if (localJob == null) localJob = Job()
         withContext(localJob!! + dispatcher) {
             when (effect) {
-                is DishFeature.Eff.AddToCart -> TODO()
+                is DishFeature.Eff.AddToCart -> {
+                    repository.addToCart(effect.id, effect.count)
+                    val count = repository.cartCount()
+                    commit(Msg.UpdateCartCount(count))
+                    notifyChannel.send(
+                        Eff.Notification.Text("В корзину добавлено $count товаров")
+                    )
+                }
                 is DishFeature.Eff.LoadDish -> {
                     val dish = repository.findDish(effect.dishId)
                     commit(DishFeature.Msg.ShowDish(dish).toMsg())
@@ -38,7 +45,16 @@ class DishEffHandler @Inject constructor(
                         notifyChannel.send(Eff.Notification.Error(t.message ?: "something error"))
                     }
                 }
-                is DishFeature.Eff.SendReview -> TODO()
+                is DishFeature.Eff.SendReview -> {
+                    try {
+                        repository.sendReview(effect.id, effect.rating, effect.review)
+                        val reviewList = repository.loadReviews(effect.id)
+                        commit(DishFeature.Msg.ShowReviews(reviewList).toMsg())
+                        notifyChannel.send(Eff.Notification.Text("Отзыв успешно отправлен"))
+                    } catch (t: Throwable) {
+                        notifyChannel.send(Eff.Notification.Error(t.message ?: "something error"))
+                    }
+                }
                 is DishFeature.Eff.Terminate -> {
                     localJob?.cancel("Terminate coroutine scope")
                     localJob = null

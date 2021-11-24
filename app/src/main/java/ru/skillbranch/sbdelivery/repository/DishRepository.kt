@@ -2,11 +2,12 @@ package ru.skillbranch.sbdelivery.repository
 
 import ru.skillbranch.sbdelivery.data.db.dao.CartDao
 import ru.skillbranch.sbdelivery.data.db.dao.DishesDao
+import ru.skillbranch.sbdelivery.data.db.entity.CartItemPersist
 import ru.skillbranch.sbdelivery.data.network.RestService
+import ru.skillbranch.sbdelivery.data.network.req.ReviewReq
 import ru.skillbranch.sbdelivery.data.network.res.ReviewRes
 import ru.skillbranch.sbdelivery.data.toDishContent
 import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
-import java.io.IOException
 import javax.inject.Inject
 
 interface IDishRepository {
@@ -20,24 +21,34 @@ interface IDishRepository {
 class DishRepository @Inject constructor(
     private val api: RestService,
     private val dishesDao: DishesDao,
-    private val cartDao: CartDao,
+    private val cartDao: CartDao
 ) : IDishRepository {
     override suspend fun findDish(id: String): DishContent = dishesDao.findDish(id).toDishContent()
 
     override suspend fun addToCart(id: String, count: Int) {
-        TODO("Not yet implemented")
+        val oldCount = cartDao.dishCount(id) ?: 0
+        if (oldCount > 0) cartDao.updateItemCount(id, oldCount + count)
+        else cartDao.addItem(CartItemPersist(dishId = id, count = count))
     }
 
-    override suspend fun cartCount(): Int {
-        TODO("Not yet implemented")
-    }
+    override suspend fun cartCount(): Int = cartDao.cartCount() ?: 0
 
     override suspend fun loadReviews(dishId: String): List<ReviewRes> {
-        //TODO
-        return emptyList()
+        val reviews = mutableListOf<ReviewRes>()
+        var offset = 0
+        while (true) {
+            val res = api.getReviews(dishId, offset * 10, 10)
+            if (res.isSuccessful) {
+                offset++
+                reviews.addAll(res.body() ?: emptyList())
+            } else {
+                break
+            }
+        }
+        return reviews
     }
 
     override suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes {
-        TODO("Not yet implemented")
+        return api.sendReview(id, ReviewReq(rating, review), "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOGNmYzY4Mjk5YzZhMDAzZTlkZGExZCIsImlhdCI6MTYzNzc2NTAxMCwiZXhwIjoxNjM3NzY2MjEwfQ.3UoJYp6uAxlyfv5mBUCLKCsmOjA2ZRs52U-PxgMsgBE")
     }
 }

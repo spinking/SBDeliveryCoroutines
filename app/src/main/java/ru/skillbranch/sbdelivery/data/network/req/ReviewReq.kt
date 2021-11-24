@@ -1,3 +1,5 @@
 package ru.skillbranch.sbdelivery.data.network.req
 
-data class ReviewReq (val rating:Int, val text:String )
+import java.io.Serializable
+
+data class ReviewReq (val rating: Int, val text: String ): Serializable

@@ -37,7 +37,8 @@ interface RestService {
     @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
     suspend fun sendReview(
         @Path("dish") dish:String,
-        @Body review : ReviewReq
+        @Body review : ReviewReq,
+        @Header("Authorization") token: String
     ): ReviewRes
 
 }
