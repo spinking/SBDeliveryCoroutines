@@ -38,7 +38,7 @@ object RootFeature {
         }
     }
 
-    fun listen(scope: CoroutineScope, effDispatcher: IEffHandler<Eff, Msg>, initState: RootState?) {
+    fun listen(scope: CoroutineScope, effDispatcher: IEffectHandler<Eff, Msg>, initState: RootState?) {
         Log.e("RootFeature", "Start listen init state: $initState")
         _scope = scope
         _scope.launch {
@@ -160,9 +160,4 @@ sealed class NavigateCommand {
 sealed class Command {
     object Finish : Command()
     //Android specific commands finish() startForResult, etc
-}
-
-
-interface IEffHandler<E, M> {
-    suspend fun handle(effect: E, commit: (M) -> Unit)
 }

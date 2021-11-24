@@ -23,7 +23,7 @@ class EffDispatcher @Inject constructor(
     private val _notifyChannel: Channel<Eff.Notification>,
     private val _commandChannel: Channel<Command>
 
-) : IEffHandler<Eff, Msg> {
+) : IEffectHandler<Eff, Msg> {
 
     val notifications = _notifyChannel.receiveAsFlow()
     val androidCommands = _commandChannel.receiveAsFlow()

@@ -5,14 +5,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import ru.skillbranch.sbdelivery.repository.CartRepository
 import ru.skillbranch.sbdelivery.screens.root.logic.Eff
-import ru.skillbranch.sbdelivery.screens.root.logic.IEffHandler
+import ru.skillbranch.sbdelivery.screens.root.logic.IEffectHandler
 import ru.skillbranch.sbdelivery.screens.root.logic.Msg
 import javax.inject.Inject
 
 class CartEffHandler @Inject constructor(
     private val repository: CartRepository,
     private val notifyChanel: Channel<Eff.Notification>
-) : IEffHandler<CartFeature.Eff, Msg> {
+) : IEffectHandler<CartFeature.Eff, Msg> {
     override suspend fun handle(effect: CartFeature.Eff, commit: (Msg) -> Unit) {
 
         suspend fun updateCart(){
