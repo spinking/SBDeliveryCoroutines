@@ -49,6 +49,6 @@ class DishRepository @Inject constructor(
     }
 
     override suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes {
-        return api.sendReview(id, ReviewReq(rating, review), "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOGNmYzY4Mjk5YzZhMDAzZTlkZGExZCIsImlhdCI6MTYzNzc2NTAxMCwiZXhwIjoxNjM3NzY2MjEwfQ.3UoJYp6uAxlyfv5mBUCLKCsmOjA2ZRs52U-PxgMsgBE")
+        return api.sendReview(id, ReviewReq(rating, review))
     }
 }
